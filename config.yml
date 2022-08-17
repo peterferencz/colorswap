@@ -1,0 +1,11 @@
+playerCountToStart: 10
+startCountdownPeriod: 200
+
+gracePeriod: 200
+graceperiodDecrement: 20
+graceperiodDecrementLimit: 60
+runPeriod: 200
+runPeriodDecrement: 20
+runPeriodDecrementLimit: 60
+blockFallPeriod: 60
+endPeriod: 100

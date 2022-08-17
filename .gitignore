@@ -1,0 +1,22 @@
+# ignore other java files
+bin/
+.classpath
+target/
+
+# Compiled class file
+*.class
+
+# Log file
+*.log
+
+#Eclipse settings folder
+.settings/
+
+# Package Files #
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar

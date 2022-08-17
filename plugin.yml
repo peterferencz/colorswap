@@ -1,0 +1,8 @@
+name: ColorSwap
+main: me.peterferencz.Main
+version: 0.1
+api-version: 1.18
+authors: [ peterferencz ]
+commands:
+   start:
+   arenasetter:
