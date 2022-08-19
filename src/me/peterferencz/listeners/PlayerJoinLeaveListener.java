@@ -11,16 +11,16 @@ import me.peterferencz.managers.GameManager;
 public class PlayerJoinLeaveListener implements Listener{
 	
     public PlayerJoinLeaveListener() {
-        Main.i.getServer().getPluginManager().registerEvents(this, Main.i);
+        Main.getInstance().getServer().getPluginManager().registerEvents(this, Main.getInstance());
     }
     
 	@EventHandler
-	public void OnPlayerJoin(PlayerJoinEvent e) {
-		GameManager.PlayerJoin(e.getPlayer());
+	public void onPlayerJoin(PlayerJoinEvent e) {
+		GameManager.playerJoin(e.getPlayer());
 	}
 	
 	@EventHandler
-	public void OnPlayerLeave(PlayerQuitEvent e) {
-		GameManager.PlayerLeave(e.getPlayer());
+	public void onPlayerLeave(PlayerQuitEvent e) {
+		GameManager.playerLeave(e.getPlayer());
 	}
 }

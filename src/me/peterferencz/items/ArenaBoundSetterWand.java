@@ -2,7 +2,6 @@ package me.peterferencz.items;
 
 import java.util.Arrays;
 
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -29,12 +28,12 @@ public class ArenaBoundSetterWand implements Listener, CommandExecutor {
     public static String namePlayArea = "Set: PlayArea";
     
     public ArenaBoundSetterWand() {
-        Main.i.getCommand("arenasetter").setExecutor(this);
-        Main.i.getServer().getPluginManager().registerEvents(this, Main.i);
+        Main.getInstance().getCommand("arenasetter").setExecutor(this);
+        Main.getInstance().getServer().getPluginManager().registerEvents(this, Main.getInstance());
     }
     
     @EventHandler
-    public void OnItemDrop(PlayerDropItemEvent e) {
+    public void onItemDrop(PlayerDropItemEvent e) {
         if (!e.getPlayer().hasPermission("jvaaplugin.wand")) { return; }
         
         ItemStack item = e.getItemDrop().getItemStack();
@@ -56,23 +55,23 @@ public class ArenaBoundSetterWand implements Listener, CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if(!(sender instanceof Player)) {
-            sender.sendMessage(ChatUtils.Color("&cOnly Players can execute this command!"));
+            sender.sendMessage(ChatUtils.color("&cOnly Players can execute this command!"));
             return true;
         }
         Player p = (Player) sender;
         if(!sender.hasPermission("jvaaplugin.wand")) {
-            p.sendMessage(ChatUtils.Color("&cYou don't have permissions to do that!"));
+            p.sendMessage(ChatUtils.color("&cYou don't have permissions to do that!"));
             return true;
         }
         
         p.getInventory().addItem(getItem());
-        p.sendMessage(ChatUtils.Color("&eYou shall have the stick!"));
+        p.sendMessage(ChatUtils.color("&eYou shall have the stick!"));
         
         return true;
     }
     
     @EventHandler
-    public void OnPlayerInteract(PlayerInteractEvent e) {
+    public void onPlayerInteract(PlayerInteractEvent e) {
         if (!e.getPlayer().hasPermission("jvaaplugin.wand")) { return; }
         
         ItemStack handItem = e.getItem();
@@ -88,8 +87,8 @@ public class ArenaBoundSetterWand implements Listener, CommandExecutor {
 
         if(e.getClickedBlock() == null) { return; }
         
-        if(GameManager.state != GameState.WAITINGFORPLAYERS) {
-            e.getPlayer().sendMessage(ChatUtils.Color("&cYou cannot use the wand while a game is in progress"));
+        if(GameManager.getState() != GameState.WAITINGFORPLAYERS) {
+            e.getPlayer().sendMessage(ChatUtils.color("&cYou cannot use the wand while a game is in progress"));
             return;
         }
         
@@ -97,22 +96,22 @@ public class ArenaBoundSetterWand implements Listener, CommandExecutor {
         case RIGHT_CLICK_BLOCK:
             if(dipslayName.equals(nameTemplate)) {
                 PositionsConfiguration.setTemplatePos1(e.getClickedBlock().getLocation());
-                e.getPlayer().sendMessage(ChatUtils.Color(String.format("&eLocation of %s is set to %s", "Template1", prettyPrintLocation(e.getClickedBlock().getLocation()))));
+                e.getPlayer().sendMessage(ChatUtils.color(String.format("&eLocation of %s is set to %s", "Template1", prettyPrintLocation(e.getClickedBlock().getLocation()))));
                 e.setCancelled(true);
             } else {
                 PositionsConfiguration.setPlayAreaPos1(e.getClickedBlock().getLocation());
-                e.getPlayer().sendMessage(ChatUtils.Color(String.format("&eLocation of %s is set to %s", "PlayArea1", prettyPrintLocation(e.getClickedBlock().getLocation()))));
+                e.getPlayer().sendMessage(ChatUtils.color(String.format("&eLocation of %s is set to %s", "PlayArea1", prettyPrintLocation(e.getClickedBlock().getLocation()))));
                 e.setCancelled(true);
             }
             break;
         case LEFT_CLICK_BLOCK:
             if(dipslayName.equals(nameTemplate)) {
                 PositionsConfiguration.setTemplatePos2(e.getClickedBlock().getLocation());
-                e.getPlayer().sendMessage(ChatUtils.Color(String.format("&eLocation of %s is set to %s", "Template2", prettyPrintLocation(e.getClickedBlock().getLocation()))));
+                e.getPlayer().sendMessage(ChatUtils.color(String.format("&eLocation of %s is set to %s", "Template2", prettyPrintLocation(e.getClickedBlock().getLocation()))));
                 e.setCancelled(true);
             } else {
                 PositionsConfiguration.setPlayAreaPos2(e.getClickedBlock().getLocation());
-                e.getPlayer().sendMessage(ChatUtils.Color(String.format("&eLocation of %s is set to %s", "PlayArea2", prettyPrintLocation(e.getClickedBlock().getLocation()))));
+                e.getPlayer().sendMessage(ChatUtils.color(String.format("&eLocation of %s is set to %s", "PlayArea2", prettyPrintLocation(e.getClickedBlock().getLocation()))));
                 e.setCancelled(true);
             }
         default:

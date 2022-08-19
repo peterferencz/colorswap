@@ -14,11 +14,11 @@ public class PositionsConfiguration {
     static File file;
     static YamlConfiguration config;
     
-    public static void Init() {
-        file = new File(Main.i.getDataFolder(), fileName);
+    public static void init() {
+        file = new File(Main.getInstance().getDataFolder(), fileName);
         if (!file.exists()) {
             file.getParentFile().mkdirs();
-            Main.i.saveResource(fileName, false);
+            Main.getInstance().saveResource(fileName, false);
         }
         
         config = YamlConfiguration.loadConfiguration(file);
@@ -45,22 +45,22 @@ public class PositionsConfiguration {
     
     public static void setTemplatePos1(Location l) {
         config.set("template.pos1", l);
-        SaveConfiguration();
+        saveConfiguration();
     }
     
     public static void setTemplatePos2(Location l) {
         config.set("template.pos2", l);
-        SaveConfiguration();
+        saveConfiguration();
      }
     
     public static void setPlayAreaPos1(Location l) {
         config.set("playarea.pos1", l);
-        SaveConfiguration();
+        saveConfiguration();
     }
     
     public static void setPlayAreaPos2(Location l) {
         config.set("playarea.pos2", l);
-        SaveConfiguration();
+        saveConfiguration();
     }
     
     public static Location getTemplateMinimum() {
@@ -91,7 +91,7 @@ public class PositionsConfiguration {
                 Math.max(getPlayAreaPos1().getBlockZ(), getPlayAreaPos2().getBlockZ()));
     }
     
-    public static void SaveConfiguration() {
+    public static void saveConfiguration() {
         try {
             config.save(file);
         } catch (IOException e) {
@@ -99,7 +99,7 @@ public class PositionsConfiguration {
         }
     }
     
-    public static Iterator<Location> IterateThroughBox(Location min, Location max){
+    public static Iterator<Location> iterateThroughBox(Location min, Location max){
         return new Iterator<Location>() {
             int x = min.getBlockX();
             int y = min.getBlockY();

@@ -13,18 +13,21 @@ import me.peterferencz.utils.PositionsConfiguration;
 
 public class Main extends JavaPlugin {
 
-    public static Main i;
+    private static Main instance;
+    public static Main getInstance() {
+        return instance;
+    }
     
 	@Override
 	public void onEnable() {
-	    i = this;
+	    instance = this;
 	    ChatUtils.log("&a[ColorSwap] Plugin started");
 	    
 	    getConfig().options().copyDefaults(true);
 	    saveConfig();
 		
-	    PositionsConfiguration.Init();
-		GameManager.Init();
+	    PositionsConfiguration.init();
+		GameManager.init();
 		
 		new ForceStartCommand();
 		new ArenaBoundSetterWand();

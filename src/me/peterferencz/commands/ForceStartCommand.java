@@ -11,17 +11,17 @@ import me.peterferencz.utils.ChatUtils;
 public class ForceStartCommand implements CommandExecutor{
 	
 	public ForceStartCommand() {
-		Main.i.getCommand("start").setExecutor(this);
+		Main.getInstance().getCommand("start").setExecutor(this);
 	}
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 	    if(!sender.hasPermission("javaplugin.forcestart")) {
-            sender.sendMessage(ChatUtils.Color("&cYou don't have permissions to execute this command!"));
+            sender.sendMessage(ChatUtils.color("&cYou don't have permissions to execute this command!"));
             return true;
         }
 	    
-	    GameManager.ForceStart();
+	    GameManager.forceStart();
 		return true;
 	}
 

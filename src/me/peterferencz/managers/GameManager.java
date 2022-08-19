@@ -30,7 +30,10 @@ public class GameManager {
         GRACEBETWEENRUNNING, //Some grace period between selecting blocks
         END
     }
-    public static GameState state;
+    static GameState state;
+    public static GameState getState() {
+        return state;
+    }
     static int subGameCount = 0;
     
 	static ArrayList<Player> players = new ArrayList<>();
@@ -43,44 +46,44 @@ public class GameManager {
 	static ItemStack selectedBlock = null;
 	static Random random = new Random();
 	
-	public static void Init() {
-		playerCountToStart = Main.i.getConfig().getInt("playerCountToStart");
+	public static void init() {
+		playerCountToStart = Main.getInstance().getConfig().getInt("playerCountToStart");
 		state = GameState.WAITINGFORPLAYERS;
 		subGameCount = 0;
 		
-		ResetMap();
+		resetMap();
 		
 		//Start main loop
 		new BukkitRunnable() {
 		    @Override public void run() {
-		        TimerTick();
+		        timerTick();
 		    }
-		}.runTaskTimer(Main.i, 0, 1);
+		}.runTaskTimer(Main.getInstance(), 0, 1);
 	}
 	
-	public static void PlayerJoin(Player p) {
+	public static void playerJoin(Player p) {
 	    switch (state) {
         case WAITINGFORPLAYERS:
         case COUNTDOWN:
-            JoinPlayers(p);
+            joinPlayers(p);
             break;
         default:
-            JoinSpectators(p);
+            joinSpectators(p);
             break;
         }
 	}
 	
-	public static void PlayerLeave(Player p) {
+	public static void playerLeave(Player p) {
 	    if (spectators.contains(p)) {
             spectators.remove(p);
         }
 	    if (players.contains(p)) {
 	        players.remove(p);
 	    }
-	    CheckPlayerCount();
+	    checkPlayerCount();
 	}
 	
-	private static void JoinSpectators(Player p) {
+	private static void joinSpectators(Player p) {
 	    p.getInventory().clear();
         p.teleport(Bukkit.getWorlds().get(0).getSpawnLocation());
         p.setGameMode(GameMode.SPECTATOR);
@@ -93,10 +96,10 @@ public class GameManager {
 	        spectators.add(p);
 	    }
 	    
-	    CheckGameEnd();
+	    checkGameEnd();
 	}
 	
-	private static void JoinPlayers(Player p) {
+	private static void joinPlayers(Player p) {
 	    p.getInventory().clear();
 	    ChatUtils.log("Teleported Player");
         p.teleport(Bukkit.getWorlds().get(0).getSpawnLocation());
@@ -109,36 +112,36 @@ public class GameManager {
             players.add(p);
         }
 	    
-	    CheckPlayerCount();
+	    checkPlayerCount();
     }
 	
 	
 	
-	private static void TimerTick() {
+	private static void timerTick() {
 	    switch (state) {
         case WAITINGFORPLAYERS:
-            PrintActionBar("&c" + players.size() + " out of " + playerCountToStart);
+            printActionBar("&c" + players.size() + " out of " + playerCountToStart);
             break;
         case COUNTDOWN:
             ticksUntilStart--;
-            PrintActionBar("&6Starting in " + getRemainingSeconds() + " seconds");
+            printActionBar("&6Starting in " + getRemainingSeconds() + " seconds");
             if (ticksUntilStart <= 0) {
-                StartGame();
+                startGame();
                 return;
             }
             break;
         case GRACEBETWEENRUNNING:
             ticksUntilStart--;
-            PrintActionBar("&6New block in " + getRemainingSeconds() + " seconds");
+            printActionBar("&6New block in " + getRemainingSeconds() + " seconds");
             if(ticksUntilStart <= 0) {
-                SelectRandomBlock();
+                selectRandomBlock();
             }
             break;
         case RUNNINGFORBLOCK:
             ticksUntilStart--;
-            PrintActionBar("&6Stand on the right block! (" + getRemainingSeconds() + "s)");
+            printActionBar("&6Stand on the right block! (" + getRemainingSeconds() + "s)");
             if(ticksUntilStart <= 0) {
-                DeleteSelectedBlock();
+                deleteSelectedBlock();
             }
             break;
         case BLOCKSFALLING:
@@ -152,7 +155,7 @@ public class GameManager {
                     players.get(i).getInventory().clear();
                 }
                 
-                ResetMap();
+                resetMap();
             }
             break;
         case END:
@@ -160,10 +163,10 @@ public class GameManager {
             ChatUtils.log(ticksUntilStart);
             if (ticksUntilStart <= 0) {
                 for (int i = 0; i < players.size(); i++) {
-                    JoinPlayers(players.get(i));
+                    joinPlayers(players.get(i));
                 }
                 for (int i = 0; i < spectators.size(); i++) {
-                    JoinPlayers(spectators.get(i));
+                    joinPlayers(spectators.get(i));
                 }
             }
             break;
@@ -172,27 +175,27 @@ public class GameManager {
         }
 	}
 	
-	private static void CheckPlayerCount() {
+	private static void checkPlayerCount() {
 	    if(players.size() >= playerCountToStart) {
-            StartCountDown();
+            startCountDown();
         } else if (players.size() < playerCountToStart && state == GameState.COUNTDOWN && !forced) {
             state = GameState.WAITINGFORPLAYERS;
         } else if(state == GameState.END) {
             state = GameState.WAITINGFORPLAYERS;
         }
-	    CheckGameEnd();
+	    checkGameEnd();
 	}
 	
-	private static void StartCountDown() {
+	private static void startCountDown() {
 	    state = GameState.COUNTDOWN;
-        ticksUntilStart = Main.i.getConfig().getInt("startCountdownPeriod");
+        ticksUntilStart = Main.getInstance().getConfig().getInt("startCountdownPeriod");
     }
 	
-	private static void DeleteSelectedBlock() {
+	private static void deleteSelectedBlock() {
 	    state = GameState.BLOCKSFALLING;
-        ticksUntilStart = Main.i.getConfig().getInt("blockFallPeriod");
+        ticksUntilStart = Main.getInstance().getConfig().getInt("blockFallPeriod");
         
-	    for (Iterator<Location> templateBlocks = PositionsConfiguration.IterateThroughBox(PositionsConfiguration.getPlayAreaMinimum(), PositionsConfiguration.getPlayAreaMaximum()); templateBlocks.hasNext();) {
+	    for (Iterator<Location> templateBlocks = PositionsConfiguration.iterateThroughBox(PositionsConfiguration.getPlayAreaMinimum(), PositionsConfiguration.getPlayAreaMaximum()); templateBlocks.hasNext();) {
             Block templateBlock = templateBlocks.next().getBlock();
             
             if (templateBlock.getType() != selectedBlock.getType()) {                
@@ -202,12 +205,12 @@ public class GameManager {
         }
 	}
 	
-	private static void SelectRandomBlock() {
+	private static void selectRandomBlock() {
 	    state = GameState.RUNNINGFORBLOCK;
         ticksUntilStart = (int) calculateRunningTime();
 	    
 	    if (floorBlocks.size() == 0) {
-            LoadFloorBlocks();
+            loadFloorBlocks();
         }
 	    
 	    selectedBlock = floorBlocks.get(random.nextInt(floorBlocks.size()));
@@ -220,14 +223,14 @@ public class GameManager {
         }
 	}
 	
-	private static void LoadFloorBlocks() {
-	    if(!ArePositionsCorrect()) { 
+	private static void loadFloorBlocks() {
+	    if(!arePositionsCorrect()) { 
 	        ChatUtils.error("Tried to update floor blocks, while the areas were not set! (user /arenasetter)");
 	        return;
 	    }
 	    floorBlocks.clear();
 	    
-	    for (Iterator<Location> templateBlocks = PositionsConfiguration.IterateThroughBox(PositionsConfiguration.getTemplateMinimum(), PositionsConfiguration.getTemplateMaximum()); templateBlocks.hasNext();) {
+	    for (Iterator<Location> templateBlocks = PositionsConfiguration.iterateThroughBox(PositionsConfiguration.getTemplateMinimum(), PositionsConfiguration.getTemplateMaximum()); templateBlocks.hasNext();) {
             Location templateBlock = templateBlocks.next();
             
             ItemStack item = new ItemStack(templateBlock.getBlock().getType());
@@ -237,10 +240,10 @@ public class GameManager {
         }
 	}
 	
-	private static void StartGame() {
-	    PrintActionBar("&6Starting...");
-	    if(!ArePositionsCorrect()) { return; }
-	    SelectRandomBlock();
+	private static void startGame() {
+	    printActionBar("&6Starting...");
+	    if(!arePositionsCorrect()) { return; }
+	    selectRandomBlock();
 	    
 	    state = GameState.RUNNINGFORBLOCK;
         ticksUntilStart = (int) calculateRunningTime();
@@ -252,7 +255,7 @@ public class GameManager {
         }
 	    
 	    subGameCount = 0;
-        ResetMap();
+        resetMap();
     }
 	
 	private static int getRemainingSeconds() {
@@ -260,21 +263,21 @@ public class GameManager {
 	}
 	
 	private static double calculateGracePeriod() {
-	    return Math.max(Main.i.getConfig().getInt("gracePeriod") - subGameCount * Main.i.getConfig().getInt("graceperiodDecrement"), Main.i.getConfig().getInt("graceperiodDecrementLimit"));
+	    return Math.max(Main.getInstance().getConfig().getInt("gracePeriod") - subGameCount * Main.getInstance().getConfig().getInt("graceperiodDecrement"), Main.getInstance().getConfig().getInt("graceperiodDecrementLimit"));
 	}
 	
 	private static double calculateRunningTime() {
-        return Math.max(Main.i.getConfig().getInt("runPeriod") - subGameCount * Main.i.getConfig().getInt("runPeriodDecrement"), Main.i.getConfig().getInt("runPeriodDecrementLimit"));
+        return Math.max(Main.getInstance().getConfig().getInt("runPeriod") - subGameCount * Main.getInstance().getConfig().getInt("runPeriodDecrement"), Main.getInstance().getConfig().getInt("runPeriodDecrementLimit"));
     }
 	
-	private static boolean ArePositionsCorrect() {
+	private static boolean arePositionsCorrect() {
 	    try {
             PositionsConfiguration.isAllSet();
             return true;
         } catch (Exception e) {
             if (forced) {
                 for (int i = 0; i < players.size(); i++) {
-                    players.get(i).sendMessage(ChatUtils.Color("&c"+e.getMessage()));
+                    players.get(i).sendMessage(ChatUtils.color("&c"+e.getMessage()));
                 }
             }else {
                 ChatUtils.error(e.getMessage());
@@ -283,8 +286,8 @@ public class GameManager {
         }
 	}
 	
-	private static void ResetMap() {
-	    if(!ArePositionsCorrect()) { return; }
+	private static void resetMap() {
+	    if(!arePositionsCorrect()) { return; }
 	    Location tMin = PositionsConfiguration.getTemplateMinimum();
 	    Location aMin = PositionsConfiguration.getPlayAreaMinimum();
 	    Location offset = new Location(tMin.getWorld(),
@@ -293,7 +296,7 @@ public class GameManager {
 	            tMin.getBlockZ() - aMin.getBlockZ());
 	    
 	    
-	    for (Iterator<Location> templateBlocks = PositionsConfiguration.IterateThroughBox(PositionsConfiguration.getTemplateMinimum(), PositionsConfiguration.getTemplateMaximum()); templateBlocks.hasNext();) {
+	    for (Iterator<Location> templateBlocks = PositionsConfiguration.iterateThroughBox(PositionsConfiguration.getTemplateMinimum(), PositionsConfiguration.getTemplateMaximum()); templateBlocks.hasNext();) {
             Location from = templateBlocks.next();
             Location to = subtractLocations(from, offset);
             to.getBlock().setBlockData(from.getBlock().getBlockData());
@@ -304,49 +307,49 @@ public class GameManager {
 	    return new Location(loc1.getWorld(), loc1.getX() - loc2.getX(), loc1.getY() - loc2.getY(), loc1.getZ() - loc2.getZ());
 	}
 	
-	private static void PrintActionBar(String msg) {
+	private static void printActionBar(String msg) {
 	    for (int i = 0; i < players.size(); i++) {
             Player p = players.get(i);
-            p.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatUtils.Color(msg)));
+            p.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatUtils.color(msg)));
         }
     }
 	
-	public static void ForceStart() {
+	public static void forceStart() {
 		forced = true;
-		StartCountDown();
+		startCountDown();
 	}
 	
-	private static void GameEnd() {
+	private static void gameEnd() {
 	    ChatUtils.log("Game end at " + subGameCount + " rounds");
         state = GameState.END;
-        ticksUntilStart = Main.i.getConfig().getInt("endPeriod");
-        ResetMap();
+        ticksUntilStart = Main.getInstance().getConfig().getInt("endPeriod");
+        resetMap();
         
         for (int i = 0; i < spectators.size(); i++) {
-            spectators.get(i).sendTitle(ChatUtils.Color("&cGame Over"), null, 5, 40, 5);
+            spectators.get(i).sendTitle(ChatUtils.color("&cGame Over"), null, 5, 40, 5);
         }
         for (int i = 0; i < players.size(); i++) {
-            players.get(i).sendTitle(ChatUtils.Color("&6You Won!"), ChatUtils.Color("&2You survived &6" + subGameCount + "&2 rounds"), 5, 40, 5);
+            players.get(i).sendTitle(ChatUtils.color("&6You Won!"), ChatUtils.color("&2You survived &6" + subGameCount + "&2 rounds"), 5, 40, 5);
             players.get(i).getInventory().clear();
         }
         subGameCount = 0;
         
 	}
 	
-	private static void CheckGameEnd() {
+	private static void checkGameEnd() {
 	    if (!(state == GameState.BLOCKSFALLING || state == GameState.BLOCKSFALLING || state == GameState.RUNNINGFORBLOCK)) {
             return;
         }
 	    if (players.size() < 2) {
-            GameEnd();
+            gameEnd();
         }
 	}
 
-    public static void PlayerDie(Player player) {
+    public static void playerDie(Player player) {
         if (!(state == GameState.BLOCKSFALLING || state == GameState.GRACEBETWEENRUNNING || state == GameState.RUNNINGFORBLOCK)) {
             return;
         }
         
-        JoinSpectators(player);
+        joinSpectators(player);
     }
 }

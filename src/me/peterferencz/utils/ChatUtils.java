@@ -1,20 +1,20 @@
 package me.peterferencz.utils;
 
-
-import org.bukkit.Bukkit;
-
+import me.peterferencz.Main;
 import net.md_5.bungee.api.ChatColor;
 
 public class ChatUtils {
-	public static String Color(String str) {
+	public static String color(String str) {
 		return ChatColor.translateAlternateColorCodes('&', str);		
 	}
 	
 	public static <T> void log(T msg) {
-	    Bukkit.getConsoleSender().sendMessage(ChatUtils.Color("&e[DEBUG] "+msg));
+	    Main.getInstance().getLogger().info(ChatUtils.color("&e[DEBUG] "+msg));
+//	    Bukkit.getConsoleSender().sendMessage(ChatUtils.color("&e[DEBUG] "+msg));
     }
 	
 	public static <T> void error(T msg) {
-	    Bukkit.getConsoleSender().sendMessage(ChatUtils.Color("&c[ERROR] "+msg));
+	    Main.getInstance().getLogger().severe(ChatUtils.color("&e[ERROR] "+msg));
+//	    Bukkit.getConsoleSender().sendMessage(ChatUtils.color("&c[ERROR] "+msg));
 	}
 }

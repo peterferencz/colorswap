@@ -16,12 +16,12 @@ import me.peterferencz.managers.GameManager;
 public class GameBreakListener implements Listener{
 
     public GameBreakListener() {
-        Main.i.getServer().getPluginManager().registerEvents(this, Main.i);
+        Main.getInstance().getServer().getPluginManager().registerEvents(this, Main.getInstance());
     }
     
     @EventHandler
-    public void OnInventoryInteract(InventoryClickEvent e) {
-        if (e.getWhoClicked().hasPermission("admin") && GameManager.state == GameManager.GameState.WAITINGFORPLAYERS) {
+    public void onInventoryInteract(InventoryClickEvent e) {
+        if (e.getWhoClicked().hasPermission("admin") && GameManager.getState() == GameManager.GameState.WAITINGFORPLAYERS) {
             return;
         } else {
             e.setCancelled(true);
@@ -29,8 +29,8 @@ public class GameBreakListener implements Listener{
     }
     
     @EventHandler
-    public void OnPlayerDropItem(PlayerDropItemEvent e) {
-        if (e.getPlayer().hasPermission("admin") && GameManager.state == GameManager.GameState.WAITINGFORPLAYERS) {
+    public void onPlayerDropItem(PlayerDropItemEvent e) {
+        if (e.getPlayer().hasPermission("admin") && GameManager.getState() == GameManager.GameState.WAITINGFORPLAYERS) {
             return;
         } else {
             e.setCancelled(true);
@@ -38,8 +38,8 @@ public class GameBreakListener implements Listener{
     }
     
     @EventHandler
-    public void OnPlayerPlaceBlock(BlockPlaceEvent e) {
-        if (e.getPlayer().hasPermission("admin") && GameManager.state == GameManager.GameState.WAITINGFORPLAYERS) {
+    public void onPlayerPlaceBlock(BlockPlaceEvent e) {
+        if (e.getPlayer().hasPermission("admin") && GameManager.getState() == GameManager.GameState.WAITINGFORPLAYERS) {
             return;
         } else {
             e.setCancelled(true);
@@ -47,8 +47,8 @@ public class GameBreakListener implements Listener{
     }
     
     @EventHandler
-    public void OnPlayerInteract(PlayerInteractEvent e) {
-        if (e.getPlayer().hasPermission("admin") && GameManager.state == GameManager.GameState.WAITINGFORPLAYERS) {
+    public void onPlayerInteract(PlayerInteractEvent e) {
+        if (e.getPlayer().hasPermission("admin") && GameManager.getState() == GameManager.GameState.WAITINGFORPLAYERS) {
             return;
         } else {
             e.setCancelled(true);
@@ -56,8 +56,8 @@ public class GameBreakListener implements Listener{
     }
     
     @EventHandler
-    public void BlockBreak(BlockBreakEvent e) {
-        if (e.getPlayer().hasPermission("admin") && GameManager.state == GameManager.GameState.WAITINGFORPLAYERS) {
+    public void onBlockBreak(BlockBreakEvent e) {
+        if (e.getPlayer().hasPermission("admin") && GameManager.getState() == GameManager.GameState.WAITINGFORPLAYERS) {
             return;
         } else {
             e.setCancelled(true);
@@ -65,12 +65,12 @@ public class GameBreakListener implements Listener{
     }
     
     @EventHandler
-    public void PlayerPunch(EntityDamageByEntityEvent e) {
+    public void onPlayerPunch(EntityDamageByEntityEvent e) {
         e.setCancelled(true);
     }
     
     @EventHandler
-    public void Hunger(FoodLevelChangeEvent e) {
+    public void onHungerChange(FoodLevelChangeEvent e) {
         e.setCancelled(true);
     }
     

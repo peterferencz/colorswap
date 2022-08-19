@@ -13,18 +13,18 @@ public class PlayerMoveListener implements Listener{
     Double deathPlaneY;
     
     public PlayerMoveListener() {
-        Main.i.getServer().getPluginManager().registerEvents(this, Main.i);
+        Main.getInstance().getServer().getPluginManager().registerEvents(this, Main.getInstance());
         trySetDeathPlaneY();
     }
     
     @EventHandler
-    public void OnPlayerMove(PlayerMoveEvent e) {
+    public void onPlayerMove(PlayerMoveEvent e) {
         if (!trySetDeathPlaneY()) {
             return;
         }
         
         if (e.getPlayer().getLocation().getY() < deathPlaneY) {
-            GameManager.PlayerDie(e.getPlayer());
+            GameManager.playerDie(e.getPlayer());
         }
     }
     
